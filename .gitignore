@@ -1,0 +1,16 @@
+# 확장 패키지 (gnome-extensions pack 결과)
+*.shell-extension.zip
+
+# 컴파일된 GSettings 스키마
+schemas/gschemas.compiled
+
+# 이 PC에만 두는 자료 (참고 클론, 내려받은 원본)
+/local/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
