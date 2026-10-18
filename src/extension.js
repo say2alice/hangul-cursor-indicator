@@ -60,12 +60,12 @@ export default class HangulCursorIndicatorExtension extends Extension {
         this._badge = null;
     }
 
-    // 포인터 옆 배지가 숨어 있으면 캐럿 옆에 배지를 잠시 보입니다(FR-VS-04).
+    // 모드가 바뀌면 캐럿 옆에 배지를 잠시 보입니다(FR-VS-04).
     _onModeChanged() {
         const previous = this._mode;
         this._mode = this._input.mode;
         this._sync();
-        if (!previous || !this._mode || this._pointerBadgeShown || !this._caret.rect)
+        if (!previous || !this._mode || !this._caret.rect)
             return;
 
         const caret = this._caret.rect;
@@ -102,9 +102,8 @@ export default class HangulCursorIndicatorExtension extends Extension {
 
     _sync() {
         const {mode} = this._input;
-        this._pointerBadgeShown = this._onTextCursor && mode !== null;
         this._badge.setMode(mode);
-        this._badge.setShown(this._pointerBadgeShown);
+        this._badge.setShown(this._onTextCursor && mode !== null);
         const [x, y] = global.get_pointer();
         this._place(x, y);
     }
