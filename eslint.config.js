@@ -22,4 +22,12 @@ export default [
             },
         },
     },
+    {
+        files: ['tests/**/*.js'],
+        languageOptions: {
+            ecmaVersion: 2022,
+            sourceType: 'module',
+            globals: globals.node,
+        },
+    },
 ];
