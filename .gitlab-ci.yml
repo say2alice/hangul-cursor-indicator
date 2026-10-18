@@ -1,0 +1,44 @@
+# 파이프라인의 실행 조건과 잡은 문서 저장소의 docs/operations/release.md §3에 있습니다.
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
+    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
+
+default:
+  image: docker.way2java.net/gnome-extension-builder:gnome50-node22
+  tags:
+    - shared-docker
+
+stages:
+  - check
+  - package
+  - release
+
+check:
+  stage: check
+  script:
+    - npm ci
+    - npm run lint
+    - npm test
+
+package:
+  stage: package
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - scripts/pack.sh
+  artifacts:
+    paths:
+      - dist/*.shell-extension.zip
+    expire_in: never
+
+release:
+  stage: release
+  rules:
+    - if: $CI_COMMIT_TAG
+  variables:
+    # main과의 조상 관계를 확인하려면 얕은 클론으로는 부족합니다.
+    GIT_DEPTH: "0"
+  script:
+    - scripts/release.sh
