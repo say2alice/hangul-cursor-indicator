@@ -30,8 +30,12 @@ export class Badge {
         this._actor.connect('notify::allocation', () => this._centerLabel());
         // 글자나 스타일이 바뀌면 글자 크기가 다음 배치 때 정해지므로, 그때 다시 가운데에 맞춥니다.
         this._label.connect('notify::allocation', () => this._centerLabel());
-        // 전체 화면 창 위에서는 셸이 visible을 끄므로, 표시 여부는 opacity로 다룹니다.
-        Main.layoutManager.addTopChrome(this._actor, {trackFullscreen: true});
+        // 모니터를 정확히 덮는 창은 직접 스캔아웃되어 배지가 화면에 나오지 않으므로,
+        // 배지가 보이는 동안 직접 스캔아웃을 끕니다(ui/boxpointer.js와 같은 방식, docs/design/architecture.md §5.3).
+        this._unredirectDisabled = false;
+        this._actor.connectObject('notify::opacity', () => this._syncUnredirect(), this);
+        // 전체 화면 창 위에서도 숨기지 않으므로(FR-VS-03) trackFullscreen을 쓰지 않습니다.
+        Main.layoutManager.addTopChrome(this._actor);
     }
 
     // 스타일을 바꾼 직후에도 새 크기를 얻도록 할당된 크기 대신 원하는 크기를 씁니다.
@@ -85,6 +89,11 @@ export class Badge {
 
     destroy() {
         this._stopFlash();
+        this._actor.disconnectObject(this);
+        if (this._unredirectDisabled) {
+            global.compositor.enable_unredirect();
+            this._unredirectDisabled = false;
+        }
         Main.layoutManager.removeChrome(this._actor);
         this._actor.destroy();
     }
@@ -99,6 +108,18 @@ export class Badge {
         const y = Math.round(content.y1 + (content.get_height() - height) / 2 + (GLYPH_DY[this._mode] ?? 0));
         if (this._label.x !== x || this._label.y !== y)
             this._label.set_position(x, y);
+    }
+
+    // 셸은 끄고 켠 횟수를 세므로, 상태가 바뀔 때만 한 번씩 부릅니다.
+    _syncUnredirect() {
+        const shown = this._actor.opacity > 0;
+        if (shown === this._unredirectDisabled)
+            return;
+        this._unredirectDisabled = shown;
+        if (shown)
+            global.compositor.disable_unredirect();
+        else
+            global.compositor.enable_unredirect();
     }
 
     // 기다리는 타이머와 진행 중인 사라짐 애니메이션을 멈춥니다.
