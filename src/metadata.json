@@ -4,5 +4,5 @@
   "description": "마우스 커서 옆에 한/영 입력 상태를 표시합니다.",
   "shell-version": ["50"],
   "url": "https://gitlab.way2java.net/project/hangul-cursor-indicator",
-  "version-name": "1.0.0"
+  "version-name": "1.0.1"
 }
