@@ -53,6 +53,8 @@ npm run lint
 scripts/pack.sh
 ```
 
+`develop` 대상 병합 요청과 `develop`에서 파이프라인이 검사(`npm run lint`, `npm test`)를 실행하고, `main`의 `v<버전>` 태그가 패키지를 만들어 GitLab 릴리스에 등록합니다. 구성과 릴리스 절차는 문서 저장소의 `docs/operations/release.md`에 있습니다.
+
 ## 라이선스
 
 GNU GPL v2 이상(GPL-2.0-or-later)입니다. 전문은 [LICENSE](LICENSE)에 있습니다.
