@@ -10,6 +10,12 @@ if [ "$CI_COMMIT_TAG" != "v$version" ]; then
     exit 1
 fi
 
+notes="$root/release-notes/$CI_COMMIT_TAG.md"
+if [ ! -s "$notes" ]; then
+    echo "릴리스 노트 release-notes/$CI_COMMIT_TAG.md 가 없습니다." >&2
+    exit 1
+fi
+
 git -C "$root" fetch --quiet origin main
 if ! git -C "$root" merge-base --is-ancestor "$CI_COMMIT_SHA" FETCH_HEAD; then
     echo "태그 커밋 $CI_COMMIT_SHA 가 main에 없습니다." >&2
@@ -22,7 +28,7 @@ curl --silent --show-error --fail-with-body --header "JOB-TOKEN: $CI_JOB_TOKEN" 
     --upload-file "$root/dist/hangul-cursor-indicator@way2java.net.shell-extension.zip" "$url"
 echo
 
-jq -n --arg tag "$CI_COMMIT_TAG" --arg description "${CI_COMMIT_TAG_MESSAGE:-$CI_COMMIT_TAG}" \
+jq -n --arg tag "$CI_COMMIT_TAG" --rawfile description "$notes" \
     --arg name "$file" --arg url "$url" \
     '{name: $tag, tag_name: $tag, description: $description,
       assets: {links: [{name: $name, url: $url, link_type: "package"}]}}' |

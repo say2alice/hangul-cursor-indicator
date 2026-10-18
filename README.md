@@ -141,7 +141,7 @@ scripts/pack.sh
 
 ### 파이프라인과 릴리스
 
-`develop` 대상 병합 요청과 `develop`에서 파이프라인이 검사(`npm run lint`, `npm test`)를 실행하고, 통과해야 병합할 수 있습니다. `main`의 `v<버전>` 태그가 패키지를 만들어 GitLab 릴리스에 등록합니다. 버전은 `src/metadata.json`의 `version-name` 한 곳에 둡니다. 실행 조건과 릴리스 절차는 문서 저장소의 `docs/operations/release.md`에 있습니다.
+`develop` 대상 병합 요청과 `develop`에서 파이프라인이 검사(`npm run lint`, `npm test`)를 실행하고, 통과해야 병합할 수 있습니다. `main`의 `v<버전>` 태그가 패키지를 만들어 GitLab 릴리스에 등록합니다. 버전은 `src/metadata.json`의 `version-name` 한 곳에 둡니다. 릴리스 노트는 `release-notes/<태그>.md`(예: `release-notes/v1.0.0.md`)에 두며, 릴리스 잡이 이 파일을 릴리스 설명으로 씁니다. 실행 조건과 릴리스 절차는 문서 저장소의 `docs/operations/release.md`에 있습니다.
 
 ## 라이선스
 
