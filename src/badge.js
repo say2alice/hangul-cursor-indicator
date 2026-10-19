@@ -67,7 +67,7 @@ export class Badge {
     }
 
     /**
-     * `holdMs` 동안 그대로 보인 뒤 `fadeMs` 동안 서서히 숨습니다(FR-VS-04).
+     * `holdMs` 동안 그대로 보인 뒤 `fadeMs` 동안 서서히 숨습니다(FR-VS-04, FR-VS-05).
      * 셸의 애니메이션 설정을 따르므로, 애니메이션을 끄면 바로 숨습니다.
      */
     flash(holdMs, fadeMs) {

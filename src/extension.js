@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
+import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 import Meta from 'gi://Meta';
 
@@ -18,16 +19,21 @@ const POINTER_INTERVAL_MS = 1000 / 60;
 // FR-VS-04에서 정한, 캐럿 옆 배지가 그대로 보이는 시간과 서서히 사라지는 시간입니다.
 const CARET_HOLD_MS = 300;
 const CARET_FADE_MS = 200;
+// FR-VS-05에서 정한, 포인터가 멈춘 뒤 포인터 옆 배지가 그대로 보이는 시간과 서서히 사라지는 시간입니다.
+const POINTER_HOLD_MS = 700;
+const POINTER_FADE_MS = 300;
 
 export default class HangulCursorIndicatorExtension extends Extension {
     enable() {
         this._onTextCursor = false;
+        this._lastMoveUs = 0;
         this._gap = DEFAULT_GAP;
         this._badge = new Badge();
         this._caretBadge = new Badge();
         this._caret = new CaretTracker();
         this._input = new InputMonitor();
         this._mode = this._input.mode;
+        this._badge.setMode(this._mode);
         this._input.connectObject('changed', () => this._onModeChanged(), this);
 
         this._interface = new Gio.Settings({schema_id: 'org.gnome.desktop.interface'});
@@ -37,7 +43,7 @@ export default class HangulCursorIndicatorExtension extends Extension {
         this._loadCursorTable();
 
         this._pointerWatch = PointerWatcher.getPointerWatcher().addWatch(
-            POINTER_INTERVAL_MS, (x, y) => this._place(x, y));
+            POINTER_INTERVAL_MS, (x, y) => this._onPointerMoved(x, y));
     }
 
     // 만든 것을 모두 해제합니다(NFR-LC-01).
@@ -60,11 +66,13 @@ export default class HangulCursorIndicatorExtension extends Extension {
         this._badge = null;
     }
 
-    // 모드가 바뀌면 캐럿 옆에 배지를 잠시 보입니다(FR-VS-04).
+    // 모드가 바뀌면 캐럿 옆에 배지를 잠시 보입니다(FR-VS-04). 포인터 옆 배지는 글자만 바꿉니다(FR-VS-05).
     _onModeChanged() {
         const previous = this._mode;
         this._mode = this._input.mode;
-        this._sync();
+        this._badge.setMode(this._mode);
+        if (this._mode === null)
+            this._badge.setShown(false);
         if (!previous || !this._mode || !this._caret.rect)
             return;
 
@@ -94,16 +102,37 @@ export default class HangulCursorIndicatorExtension extends Extension {
         const entry = sprite
             ? findTextCursor(this._cursorTable, {width: sprite.get_width(), height: sprite.get_height(), xhot, yhot})
             : null;
+        const wasOnText = this._onTextCursor;
         this._onTextCursor = entry !== null;
         if (entry)
             this._gap = gapFor(entry, Meta.prefs_get_cursor_size());
-        this._sync();
+        this._placeAtPointer();
+        if (!this._onTextCursor)
+            this._badge.setShown(false);
+        // 앱은 포인터가 들어온 뒤에 커서를 정하므로, 움직인 직후에 텍스트 커서로 바뀐 것은 움직임으로 봅니다(docs/design/architecture.md §5.3).
+        else if (!wasOnText && this._movedRecently())
+            this._showPointerBadge();
     }
 
-    _sync() {
-        const {mode} = this._input;
-        this._badge.setMode(mode);
-        this._badge.setShown(this._onTextCursor && mode !== null);
+    _onPointerMoved(x, y) {
+        this._lastMoveUs = GLib.get_monotonic_time();
+        this._place(x, y);
+        this._showPointerBadge();
+    }
+
+    _movedRecently() {
+        return GLib.get_monotonic_time() - this._lastMoveUs < POINTER_HOLD_MS * 1000;
+    }
+
+    // 표시 조건(FR-VS-02)을 만족하면 잠시 보인 뒤 서서히 숨기고(FR-VS-05), 아니면 바로 숨깁니다.
+    _showPointerBadge() {
+        if (this._onTextCursor && this._mode !== null)
+            this._badge.flash(POINTER_HOLD_MS, POINTER_FADE_MS);
+        else
+            this._badge.setShown(false);
+    }
+
+    _placeAtPointer() {
         const [x, y] = global.get_pointer();
         this._place(x, y);
     }
