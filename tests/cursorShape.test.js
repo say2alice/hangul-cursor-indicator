@@ -110,12 +110,12 @@ test('표에 없는 커서는 null입니다', () => {
     assert.equal(findTextCursor(table, {width: 24, height: 24, xhot: 4, yhot: 4}), null);
 });
 
-test('I빔 간격은 (4, 4)이고 반대쪽은 (6, 11)입니다', () => {
-    assert.deepEqual(gapFor({nominal: 24, extents: IBEAM_EXTENTS}, 24), {right: 4, down: 4, left: 6, up: 11});
+test('I빔 간격은 (4, 6)이고 반대쪽은 (6, 11)입니다', () => {
+    assert.deepEqual(gapFor({nominal: 24, extents: IBEAM_EXTENTS}, 24), {right: 4, down: 6, left: 6, up: 11});
 });
 
 test('큰 그림은 커서 크기로 환산합니다', () => {
     const doubled = {right: 4, below: 16, left: 8, above: 18};
-    assert.deepEqual(gapFor({nominal: 48, extents: doubled}, 24), {right: 4, down: 4, left: 6, up: 11});
-    assert.deepEqual(gapFor({nominal: 24, extents: IBEAM_EXTENTS}, 48), {right: 6, down: 8, left: 10, up: 20});
+    assert.deepEqual(gapFor({nominal: 48, extents: doubled}, 24), {right: 4, down: 6, left: 6, up: 11});
+    assert.deepEqual(gapFor({nominal: 24, extents: IBEAM_EXTENTS}, 48), {right: 6, down: 10, left: 10, up: 20});
 });
