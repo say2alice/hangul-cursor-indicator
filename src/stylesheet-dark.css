@@ -1,4 +1,4 @@
-/* 원형 외곽선 배지(ADR-0003). 색은 docs/design/badge-design-options.md §4의 값입니다. */
+/* 원형 외곽선 배지(ADR-0003). 크기와 색은 docs/design/badge-design.md §1, §2의 값입니다. */
 /* width, height는 테두리 안쪽 크기이고, 셸은 테두리를 정수 px로 그립니다. 테두리 2px를 더해 지름 18px입니다. */
 .hci-badge {
     width: 14px;

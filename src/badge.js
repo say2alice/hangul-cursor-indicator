@@ -6,7 +6,7 @@ import St from 'gi://St';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
 const LABELS = {hangul: 'ㅎ', latin: 'A'};
-// 글자의 세로 보정(px)입니다. 글꼴 상자 가운데에 두면 자모 ㅎ과 대문자 A가 처져 보여 올립니다(docs/design/badge-design-options.md §4).
+// 글자의 세로 보정(px)입니다. 글꼴 상자 가운데에 두면 자모 ㅎ과 대문자 A가 처져 보여 올립니다(docs/design/badge-design.md §2).
 const GLYPH_DY = {hangul: -1, latin: -1};
 
 /**
