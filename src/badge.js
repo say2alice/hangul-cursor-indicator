@@ -27,6 +27,11 @@ export class Badge {
             opacity: 0,
         });
         this._actor.add_child(this._label);
+        // 셸이 종료될 때는 disable() 없이 위젯이 먼저 해제되므로, 그 뒤의 호출은 무시합니다(docs/design/architecture.md §5.1).
+        this._actor.connect('destroy', () => {
+            this._removeHoldTimer();
+            this._actor = null;
+        });
         this._actor.connect('notify::allocation', () => this._centerLabel());
         // 글자나 스타일이 바뀌면 글자 크기가 다음 배치 때 정해지므로, 그때 다시 가운데에 맞춥니다.
         this._label.connect('notify::allocation', () => this._centerLabel());
@@ -41,14 +46,14 @@ export class Badge {
     // 스타일을 바꾼 직후에도 새 크기를 얻도록 할당된 크기 대신 원하는 크기를 씁니다.
     // 셸이 시작하는 중처럼 아직 화면에 올라가지 않았으면 `null`입니다.
     get size() {
-        if (!this._actor.get_stage())
+        if (!this._actor?.get_stage())
             return null;
         const [, , width, height] = this._actor.get_preferred_size();
         return {width, height};
     }
 
     setMode(mode) {
-        if (mode === this._mode)
+        if (mode === this._mode || !this._actor)
             return;
 
         this._mode = mode;
@@ -62,6 +67,8 @@ export class Badge {
     }
 
     setShown(shown) {
+        if (!this._actor)
+            return;
         this._stopFlash();
         this._actor.opacity = shown ? 255 : 0;
     }
@@ -71,6 +78,8 @@ export class Badge {
      * 셸의 애니메이션 설정을 따르므로, 애니메이션을 끄면 바로 숨습니다.
      */
     flash(holdMs, fadeMs) {
+        if (!this._actor)
+            return;
         this.setShown(true);
         this._holdId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, holdMs, () => {
             this._holdId = 0;
@@ -84,11 +93,14 @@ export class Badge {
     }
 
     moveTo(x, y) {
-        this._actor.set_position(Math.round(x), Math.round(y));
+        this._actor?.set_position(Math.round(x), Math.round(y));
     }
 
     destroy() {
-        this._stopFlash();
+        this._removeHoldTimer();
+        if (!this._actor)
+            return;
+        this._actor.remove_all_transitions();
         this._actor.disconnectObject(this);
         if (this._unredirectDisabled) {
             global.compositor.enable_unredirect();
@@ -100,7 +112,7 @@ export class Badge {
 
     _centerLabel() {
         // 끌 때 화면에서 빠지는 중이거나 아직 배치되기 전에는 맞출 크기가 없습니다.
-        if (!this._actor.get_stage() || !this._actor.has_allocation())
+        if (!this._actor?.get_stage() || !this._actor.has_allocation())
             return;
         const content = this._actor.get_theme_node().get_content_box(this._actor.get_allocation_box());
         const [, , width, height] = this._label.get_preferred_size();
@@ -112,6 +124,8 @@ export class Badge {
 
     // 셸은 끄고 켠 횟수를 세므로, 상태가 바뀔 때만 한 번씩 부릅니다.
     _syncUnredirect() {
+        if (!this._actor)
+            return;
         const shown = this._actor.opacity > 0;
         if (shown === this._unredirectDisabled)
             return;
@@ -124,10 +138,14 @@ export class Badge {
 
     // 기다리는 타이머와 진행 중인 사라짐 애니메이션을 멈춥니다.
     _stopFlash() {
+        this._removeHoldTimer();
+        this._actor.remove_all_transitions();
+    }
+
+    _removeHoldTimer() {
         if (this._holdId) {
             GLib.source_remove(this._holdId);
             this._holdId = 0;
         }
-        this._actor.remove_all_transitions();
     }
 }
