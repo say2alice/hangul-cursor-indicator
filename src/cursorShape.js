@@ -137,14 +137,14 @@ export function findTextCursor(table, sprite) {
 
 /**
  * 텍스트 커서 그림에 맞춘 배지 간격(px)입니다. 오른쪽과 왼쪽, 위는 그림 끝에서 2px 떨어지고,
- * 아래는 그림 아래 끝의 절반이라 배지가 커서 옆에 붙습니다. 근거는 docs/design/architecture.md §5.2에 있습니다.
+ * 아래는 그림 아래 끝의 절반에서 2px 더 내려 배지가 커서 옆에서 조금 아래에 붙습니다. 근거는 docs/design/badge-design.md §3.1에 있습니다.
  */
 export function gapFor(entry, cursorSize) {
     const scale = cursorSize / entry.nominal;
     const {right, below, left, above} = entry.extents;
     return {
         right: Math.round(right * scale) + 2,
-        down: Math.floor(below * scale / 2),
+        down: Math.floor(below * scale / 2) + 2,
         left: Math.round(left * scale) + 2,
         up: Math.round(above * scale) + 2,
     };
