@@ -4,7 +4,7 @@
 
 GNOME Wayland에서 마우스 커서 옆에 한/영 입력 상태를 표시하는 GNOME Shell 확장입니다.
 
-> 이 프로젝트는 [GitLab](https://gitlab.way2java.net/jangb/hangul-cursor-indicator)에서 개발합니다. GitHub 저장소는 읽기 전용 미러입니다. 릴리스와 이슈는 GitLab에 있습니다.
+> 이 프로젝트는 [GitLab](https://gitlab.way2java.net/jangb/hangul-cursor-indicator)에서 개발합니다. GitHub 저장소는 읽기 전용 미러입니다. 릴리스는 GitLab과 GitHub에 함께 올리고, 이슈는 GitLab에서 받습니다.
 
 - 마우스 포인터가 텍스트 커서(I빔)일 때, 포인터를 움직이면 포인터 오른쪽 아래에 배지를 표시합니다. 한글은 파란 원에 흰 `ㅎ`, 영문은 회색 테두리 원에 `A`입니다.
 - 포인터를 멈추면 배지가 0.7초 뒤 0.3초 동안 서서히 사라지고, 다시 움직이면 바로 나타납니다. 멈춘 동안에는 한/영을 바꿔도 포인터 옆 배지는 나오지 않습니다.
@@ -28,7 +28,7 @@ GNOME Wayland에서 마우스 커서 옆에 한/영 입력 상태를 표시하�
 
 ### 릴리스 패키지로 설치
 
-1. [릴리스](https://gitlab.way2java.net/jangb/hangul-cursor-indicator/-/releases) 페이지에서 `hangul-cursor-indicator-<버전>.shell-extension.zip`을 내려받습니다.
+1. [GitLab](https://gitlab.way2java.net/jangb/hangul-cursor-indicator/-/releases) 또는 [GitHub](https://github.com/say2alice/hangul-cursor-indicator/releases)의 릴리스 페이지에서 `hangul-cursor-indicator-<버전>.shell-extension.zip`을 내려받습니다.
 
 2. 확장을 설치합니다. 출력은 없습니다. 설치만으로는 배지가 나오지 않고, 3번과 4번까지 마쳐야 나옵니다. 같은 파일을 다시 설치하면 `exists and --force was not specified`가 나오는데, 이미 설치됐다는 뜻입니다.
 
