@@ -4,7 +4,7 @@ English | [한국어](README.ko.md)
 
 A GNOME Shell extension that shows the Korean/English input mode next to the mouse pointer on GNOME Wayland.
 
-> This project is developed on [GitLab](https://gitlab.way2java.net/project/hangul-cursor-indicator). The GitHub repository is a read-only mirror. Releases and issues are on GitLab.
+> This project is developed on [GitLab](https://gitlab.way2java.net/jangb/hangul-cursor-indicator). The GitHub repository is a read-only mirror. Releases and issues are on GitLab.
 
 - When the mouse pointer is a text cursor (I-beam), a badge appears at the lower right of the pointer as you move it. Hangul mode shows a white `ㅎ` on a blue circle, and English mode shows an `A` in a gray outlined circle.
 - When you stop the pointer, the badge fades out over 0.3 seconds after 0.7 seconds, and it appears again as soon as you move the pointer. While the pointer is still, switching the input mode does not bring back the pointer badge.
@@ -28,7 +28,7 @@ Tested on Ubuntu 26.04.1 LTS, GNOME Shell 50.1, and `ibus-hangul` 1.5.5.
 
 ### Install from a release
 
-1. Download `hangul-cursor-indicator-<version>.shell-extension.zip` from the [Releases](https://gitlab.way2java.net/project/hangul-cursor-indicator/-/releases) page on GitLab.
+1. Download `hangul-cursor-indicator-<version>.shell-extension.zip` from the [Releases](https://gitlab.way2java.net/jangb/hangul-cursor-indicator/-/releases) page on GitLab.
 
 2. Install the extension. The command prints nothing. Installing alone does not show the badge; it appears only after steps 3 and 4. If you install the same file again, you get `exists and --force was not specified`, which means the extension is already installed.
 
@@ -57,7 +57,7 @@ To upgrade to a new version, add `--force` to the command in step 2, and then lo
 To use unreleased code, build the package from the repository and install it. The `gnome-extensions` command is in the `gnome-shell` package.
 
 ```bash
-git clone https://gitlab.way2java.net/project/hangul-cursor-indicator.git
+git clone https://gitlab.way2java.net/jangb/hangul-cursor-indicator.git
 ```
 
 ```bash
@@ -82,7 +82,7 @@ gnome-extensions uninstall hangul-cursor-indicator@way2java.net
 
 ## Development
 
-The design, requirements, and progress are documented in Korean in the documentation repository [hangul-cursor-indicator-doc](https://gitlab.way2java.net/project/hangul-cursor-indicator-doc). Setting up the development environment, testing in a nested shell, and the pipeline and release process are described in the [Development](README.ko.md#개발) section of the Korean README.
+The design, requirements, and progress are documented in Korean in the documentation repository [hangul-cursor-indicator-doc](https://gitlab.way2java.net/jangb/hangul-cursor-indicator-doc). Setting up the development environment, testing in a nested shell, and the pipeline and release process are described in the [Development](README.ko.md#개발) section of the Korean README.
 
 Development requires GNOME Shell 50, `mutter-dev-bin` (for the nested shell), and Node.js 20.19 or later 20.x, 22.13 or later 22.x, or 24 or later. Run the following commands from the repository root.
 
